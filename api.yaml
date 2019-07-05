@@ -1,0 +1,409 @@
+openapi: 3.0.1
+info:
+  title: Lichang OpenAPI
+  description: '这是Lichang Lab OpenAPI的接口文档，使用api需要先申请token，在header中通过指定Authorization字段来通过验证。该文档可以直接测试使用，请在Authorize里面设置api token。'
+  #termsOfService: http://swagger.io/terms/
+  contact:
+    email: developer@lcyoufu.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+#externalDocs:
+#  description: Find out more about Swagger
+#  url: http://swagger.io
+servers:
+#- url: https://lab.lichang.io/api/
+- url: https://openapi.lcyoufu.com/api/
+#- url: http://petstore.swagger.io/v2
+tags:
+- name: user
+  description: 用户信息
+- name: circle
+  description: 圈子信息
+- name: rank
+  description: 热门信息
+- name: article
+  description: 文章信息
+
+paths:
+  /user/info:
+    get:
+      tags:
+      - user
+      summary: 根据id查用户信息
+      description: 根据id查用户信息
+      # ，id或昵称必须输入一个
+      parameters:
+      - name: userid
+        in: query
+        description: 用户id
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      # - name: nickname
+      #   in: query
+      #   description: 用户昵称
+      #   required: false
+      #   style: form
+      #   explode: true
+      #   schema:
+      #     type: string
+      responses:
+        200:
+          description: 成功返回
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: integer
+                  data:
+                    $ref: '#/components/schemas/User'
+      security:
+      - api_key: []
+  /user/article:
+    get:
+      tags:
+      - user
+      summary: 根据id查用户文章列表
+      description: 根据id查用户文章列表
+      parameters:
+      - name: userid
+        in: query
+        description: 用户id
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: 成功返回
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      pageNum:
+                        type: integer
+                      pageSize:
+                        type: integer
+                      count:
+                        type: integer
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Article'
+      security:
+      - api_key: []
+  /circle/list:
+    get:
+      tags:
+      - circle
+      summary: 查询圈子列表
+      description: 查询圈子列表
+      responses:
+        200:
+          description: 成功返回
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      pageNum:
+                        type: integer
+                      pageSize:
+                        type: integer
+                      count:
+                        type: integer
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Circle'
+      security:
+      - api_key: []
+  /rank/hotarticle:
+    get:
+      tags:
+      - rank
+      summary: 根据圈子id查圈子热门文章
+      description: 根据圈子id查圈子热门文章
+      parameters:
+      - name: circleid
+        in: query
+        description: 圈子id
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: 成功返回
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Article'
+      security:
+      - api_key: []
+  /rank/choice:
+    get:
+      tags:
+      - rank
+      summary: 精选文章列表
+      description: 精选文章列表
+      responses:
+        200:
+          description: 成功返回
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      pageNum:
+                        type: integer
+                      pageSize:
+                        type: integer
+                      count:
+                        type: integer
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Article'
+      security:
+      - api_key: []
+  /rank/articlerank:
+    get:
+      tags:
+      - rank
+      summary: 文章排行榜
+      description: 文章排行榜
+      responses:
+        200:
+          description: 成功返回
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Article'
+      security:
+      - api_key: []
+  /article/profile:
+    get:
+      tags:
+      - article
+      summary: 根据文章id查文章信息
+      description: 根据文章id查文章信息
+      parameters:
+      - name: articleid
+        in: query
+        description: 文章id
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: 成功返回
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: integer
+                  data:
+                    $ref: '#/components/schemas/ArticleDetail'
+      security:
+      - api_key: []
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        nickname:
+          type: string
+          description: 昵称
+        avatar:
+          type: string
+          description: 头像url
+        lcNumber:
+          type: number
+          description: LC余额
+        createTime:
+          type: integer
+          description: 创建账号时间戳
+        focusCount:
+          type: integer
+          description: 关注人数
+        fansCount:
+          type: integer
+          description: 被关注人数
+    Article:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 文章id
+        title:
+          type: string
+          description: 标题
+        nickname:
+          type: string
+          description: 用户昵称
+        avatar:
+          type: string
+          description: 用户头像url
+        lcNumber:
+          type: number
+          description: 用户LC余额
+        chainName:
+          type: string
+          description: 所属链名称
+        chainid:
+          type: integer
+          description: 所属链id
+        circleid:
+          type: integer
+          description: 所属圈子id
+        banner:
+          type: string
+          description: 标题图片url
+        description:
+          type: string
+          description: 文章描述
+        predictBonus:
+          type: number
+          description: 预期收益
+        like:
+          type: integer
+          description: 点赞数
+        dislike:
+          type: integer
+          description: 点踩数
+        comment:
+          type: integer
+          description: 评论数
+        view:
+          type: integer
+          description: 观看数
+        createTime:
+          type: integer
+          description: 创建时间戳
+    Circle:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 圈子id
+        chainid:
+          type: integer
+          description: 所属链id
+        chainName:
+          type: string
+          description: 所属链名称
+        name:
+          type: string
+          description: 圈子名称
+        logo:
+          type: string
+          description: 圈子logo url
+        articleNumber:
+          type: integer
+          description: 圈子文章数量
+    ArticleDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 文章id
+        title:
+          type: string
+          description: 标题
+        nickname:
+          type: string
+          description: 用户昵称
+        avatar:
+          type: string
+          description: 用户头像url
+        lcNumber:
+          type: number
+          description: 用户LC余额
+        chainName:
+          type: string
+          description: 所属链名称
+        chainid:
+          type: integer
+          description: 所属链id
+        circleid:
+          type: integer
+          description: 所属圈子id
+        banner:
+          type: string
+          description: 标题图片url
+        content:
+          type: string
+          description: 文章内容
+        predictBonus:
+          type: number
+          description: 预期收益
+        like:
+          type: integer
+          description: 点赞数
+        dislike:
+          type: integer
+          description: 点踩数
+        comment:
+          type: integer
+          description: 评论数
+        view:
+          type: integer
+          description: 观看数
+        createTime:
+          type: integer
+          description: 创建时间戳
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header
