@@ -14,7 +14,7 @@ info:
 #  url: http://swagger.io
 servers:
 #- url: https://lab.lichang.io/api/
-- url: https://openapi.lcyoufu.com/api/
+- url: https://openapi.lcyoufu.com/
 #- url: http://petstore.swagger.io/v2
 tags:
 - name: user
